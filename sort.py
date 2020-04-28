@@ -293,24 +293,24 @@ if __name__ == '__main__':
     
     with open('output/%s.txt'%(seq),'w') as out_file:
       print("Processing %s."%(seq))
-      for frame in range(int(seq_dets[:,0].max())):
+      for frame in range(int(seq_dets[:,0].max())):   #当前视频总帧数，逐帧处理，seq_dets矩阵第一列的最大值为总帧数
         frame += 1 #detection and frame numbers begin at 1
-        dets = seq_dets[seq_dets[:, 0]==frame, 2:7]
+        dets = seq_dets[seq_dets[:, 0]==frame, 2:7]   #从set_dets矩阵中取出第一列等于当前帧的所有检测目标bbox到dets
         dets[:, 2:4] += dets[:, 0:2] #convert to [x1,y1,w,h] to [x1,y1,x2,y2]
         total_frames += 1
 
-        if(display):
+        if(display):   #如果显示结果，先把当前帧的jpg图片取出
           fn = 'mot_benchmark/%s/%s/img1/%06d.jpg'%(phase, seq, frame)
           im =io.imread(fn)
           ax1.imshow(im)
           plt.title(seq + ' Tracked Targets')
 
         start_time = time.time()
-        trackers = mot_tracker.update(dets)
+        trackers = mot_tracker.update(dets)   #把当前所有帧的bbox送入跟踪器，获得所有目标的跟踪结果
         cycle_time = time.time() - start_time
         total_time += cycle_time
 
-        for d in trackers:
+        for d in trackers:   #把当前帧的跟踪结果画到图片上
           print('%d,%d,%.2f,%.2f,%.2f,%.2f,1,-1,-1,-1'%(frame,d[4],d[0],d[1],d[2]-d[0],d[3]-d[1]),file=out_file)
           if(display):
             d = d.astype(np.int32)
