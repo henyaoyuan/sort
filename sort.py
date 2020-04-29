@@ -226,15 +226,15 @@ class Sort(object):
     """
     self.frame_count += 1
     # get predicted locations from existing trackers.
-    trks = np.zeros((len(self.trackers), 5))
+    trks = np.zeros((len(self.trackers), 5))    # 根据当前卡尔曼滤波跟踪器的个数（等于上一帧被跟踪目标数）创建二维矩阵
     to_del = []
     ret = []
-    for t, trk in enumerate(trks):
-      pos = self.trackers[t].predict()[0]
+    for t, trk in enumerate(trks):   #循环遍历卡尔曼跟踪器列表
+      pos = self.trackers[t].predict()[0]    #用卡尔曼跟踪器预测当前帧时刻的预测bbox
       trk[:] = [pos[0], pos[1], pos[2], pos[3], 0]
       if np.any(np.isnan(pos)):
         to_del.append(t)
-    trks = np.ma.compress_rows(np.ma.masked_invalid(trks))
+    trks = np.ma.compress_rows(np.ma.masked_invalid(trks))   #trks存放了上一帧所有被跟踪的目标在当前帧的预测bbox
     for t in reversed(to_del):
       self.trackers.pop(t)
     matched, unmatched_dets, unmatched_trks = associate_detections_to_trackers(dets,trks)
