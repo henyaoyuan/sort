@@ -49,7 +49,7 @@ def linear_assignment(cost_matrix):
     x, y = linear_sum_assignment(cost_matrix)
     return np.array(list(zip(x, y)))
 
-
+#计算IOU,参数是两个bbox，返回IOU值
 @jit
 def iou(bb_test, bb_gt):
   """
@@ -67,6 +67,7 @@ def iou(bb_test, bb_gt):
   return(o)
 
 
+#将bbox由（x1,y1,x2,y2）转换成(x,y,s,r)的格式
 def convert_bbox_to_z(bbox):
   """
   Takes a bounding box in the form [x1,y1,x2,y2] and returns z in the form
@@ -81,7 +82,7 @@ def convert_bbox_to_z(bbox):
   r = w / float(h)
   return np.array([x, y, s, r]).reshape((4, 1))
 
-
+#将bbox由(x,y,s,r)转换成（x1,y1,x2,y2）的格式
 def convert_x_to_bbox(x,score=None):
   """
   Takes a bounding box in the centre form [x,y,s,r] and returns it in the form
@@ -160,6 +161,7 @@ def associate_detections_to_trackers(detections,trackers,iou_threshold = 0.3):
   Assigns detections to tracked object (both represented as bounding boxes)
 
   Returns 3 lists of matches, unmatched_detections and unmatched_trackers
+  返回三个list，分别是配对成功的，未匹配成功的检测目标，以及未匹配成功的跟踪目标
   """
   if(len(trackers)==0):
     return np.empty((0,2),dtype=int), np.arange(len(detections)), np.empty((0,5),dtype=int)
