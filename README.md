@@ -100,4 +100,5 @@ Below is the gist of how to instantiate and update SORT. See the ['__main__'](ht
     # track_bbs_ids is a np array where each row contains a valid bounding box and track_id (last column)
     ...
     
+ 代码解析博客：https://blog.csdn.net/yiran103/article/details/89421140
  
