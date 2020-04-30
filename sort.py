@@ -240,6 +240,7 @@ class Sort(object):
     matched, unmatched_dets, unmatched_trks = associate_detections_to_trackers(dets,trks)
 
     # update matched trackers with assigned detections
+    #对于匹配上的跟踪器，更新状态，m[1]是跟踪器，m[0]是与之匹配的目标bbox
     for m in matched:
       self.trackers[m[1]].update(dets[m[0], :])
 
@@ -249,12 +250,14 @@ class Sort(object):
         trk = KalmanBoxTracker(dets[i,:])
         self.trackers.append(trk)
     i = len(self.trackers)
+    #自后向前遍历，仅返回在当前帧出现且命中周期大于self.min_hits（除非跟踪刚开始）的跟踪结果？？？
     for trk in reversed(self.trackers):
         d = trk.get_state()[0]
         if (trk.time_since_update < 1) and (trk.hit_streak >= self.min_hits or self.frame_count <= self.min_hits):
           ret.append(np.concatenate((d,[trk.id+1])).reshape(1,-1)) # +1 as MOT benchmark requires positive
         i -= 1
         # remove dead tracklet
+        #如果跟踪器跟踪框长时间未匹配到检测框，删除跟踪器
         if(trk.time_since_update > self.max_age):
           self.trackers.pop(i)
     if(len(ret)>0):
