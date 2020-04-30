@@ -244,6 +244,7 @@ class Sort(object):
       self.trackers[m[1]].update(dets[m[0], :])
 
     # create and initialise new trackers for unmatched detections
+    #为当前帧未匹配成功的检测框，初始化一个新的卡尔曼跟踪器，并推入跟踪器列表
     for i in unmatched_dets:
         trk = KalmanBoxTracker(dets[i,:])
         self.trackers.append(trk)
